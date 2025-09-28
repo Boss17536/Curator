@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game & Media Curator</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/ico" href="./favicon.ico">
+  <meta name="msapplication-TileColor" content="#0f1115">
+  <meta name="theme-color" content="#0f1115">
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f1115',
+            accent: {
+              1: '#ff4d6d',
+              2: '#6f42c1'
+            }
+          },
+          fontFamily: {
+            display: ['Bebas Neue', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @keyframes swap {
+      0%, 8% { transform: translateY(0); }
+      11%, 19% { transform: translateY(-100%); }
+      22%, 30% { transform: translateY(-200%); }
+      33%, 41% { transform: translateY(-300%); }
+      44%, 52% { transform: translateY(-400%); }
+      55%, 63% { transform: translateY(-500%); }
+      66%, 74% { transform: translateY(-600%); }
+      77%, 85% { transform: translateY(-700%); }
+      88%, 96% { transform: translateY(-800%); }
+      100% { transform: translateY(-900%); }
+    }
+    
+    #content.ready {
+      opacity: 1 !important;
+    }
+    
+    .category-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: translateY(0) scale(1);
+    }
+    
+    .category-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(255, 77, 109, 0.3);
+    }
+    
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 77, 109, 0.1), rgba(111, 66, 193, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
+    
+    .category-card:hover::before {
+      opacity: 1;
+    }
+    
+    .category-icon {
+      transition: transform 0.3s ease;
+    }
+    
+    .category-card:hover .category-icon {
+      transform: rotate(10deg) scale(1.1);
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    .image-hover {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .image-hover:hover {
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+      z-index: 10;
+    }
+    
+    .subtitle-glow {
+      text-shadow: 0 0 20px rgba(255, 77, 109, 0.5);
+    }
+    
+    /* Netflix-Style Gallery Styles */
+    .poster-card {
+      position: relative;
+    }
+    
+    .poster-frame {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transform-origin: center;
+      will-change: transform;
+    }
+    
+    .poster-card:hover .poster-frame {
+      transform: scale(1.05) translateZ(0);
+      filter: brightness(1.1);
+    }
+    
+    .featured-grid .poster-card:hover .poster-frame {
+      transform: scale(1.08) translateY(-5px) translateZ(0);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 77, 109, 0.3);
+    }
+    
+    .poster-row .poster-card:hover .poster-frame {
+      transform: scale(1.1) translateY(-3px) translateZ(0);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+    }
+    
+    @media (max-width: 768px) {
+      .poster-card:hover .poster-frame {
+        transform: scale(1.03) translateZ(0);
+      }
+      
+      .featured-grid .poster-card:hover .poster-frame {
+        transform: scale(1.05) translateY(-2px) translateZ(0);
+      }
+      
+      .poster-row .poster-card:hover .poster-frame {
+        transform: scale(1.06) translateY(-2px) translateZ(0);
+      }
+    }
+    
+    /* Smooth scrolling for better mobile experience */
+    .poster-row {
+      scroll-behavior: smooth;
+    }
+    
+    /* Add a subtle glow effect to posters on hover */
+    .poster-frame::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 77, 109, 0.1), rgba(111, 66, 193, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
+    
+    .poster-card:hover .poster-frame::after {
+      opacity: 1;
+    }
+    
+    /* Add animated backgrounds for category cards */
+    .games-animated-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 2s ease-in-out;
+      transform: scale(1.1);
+      animation: slideAndZoom 15s infinite linear;
+    }
+    
+    .games-animated-bg.active {
+      opacity: 0.3;
+    }
+    
+    .shows-animated-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 2s ease-in-out;
+      transform: scale(1.1);
+      animation: slideAndZoom 18s infinite linear;
+    }
+    
+    .shows-animated-bg.active {
+      opacity: 0.3;
+    }
+    
+    .software-animated-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 2s ease-in-out;
+      transform: scale(1.1);
+      animation: slideAndZoom 16s infinite linear;
+    }
+    
+    .software-animated-bg.active {
+      opacity: 0.3;
+    }
+    
+    .others-animated-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 2s ease-in-out;
+      transform: scale(1.1);
+      animation: slideAndZoom 17s infinite linear;
+    }
+    
+    .others-animated-bg.active {
+      opacity: 0.3;
+    }
+    
+    @keyframes slideAndZoom {
+      0% { transform: scale(1.1) translateX(-20px) translateY(-10px); }
+      25% { transform: scale(1.15) translateX(10px) translateY(-15px); }
+      50% { transform: scale(1.2) translateX(20px) translateY(10px); }
+      75% { transform: scale(1.15) translateX(-10px) translateY(15px); }
+      100% { transform: scale(1.1) translateX(-20px) translateY(-10px); }
+    }
+    
+    /* Dark Psychology Enhancements */
+    .urgency-pulse {
+      animation: urgencyGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes urgencyGlow {
+      from { box-shadow: 0 0 5px rgba(255, 77, 109, 0.4), 0 0 10px rgba(255, 77, 109, 0.3); }
+      to { box-shadow: 0 0 15px rgba(255, 77, 109, 0.8), 0 0 25px rgba(255, 77, 109, 0.6); }
+    }
+    
+    .scarcity-indicator {
+      background: linear-gradient(45deg, #ff4d6d, #ff6b6b);
+      animation: scarcityBlink 3s ease-in-out infinite;
+    }
+    
+    @keyframes scarcityBlink {
+      0%, 70% { opacity: 0.9; }
+      85%, 100% { opacity: 0.4; }
+    }
+    
+    .social-proof-badge {
+      background: rgba(111, 66, 193, 0.2);
+      border: 1px solid rgba(111, 66, 193, 0.4);
+      backdrop-filter: blur(10px);
+    }
+    
+    .commitment-trigger {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .commitment-trigger::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.6s;
+    }
+    
+    .commitment-trigger:hover::before {
+      left: 100%;
+    }
+    
+    .fomo-gradient {
+      background: linear-gradient(135deg, 
+        rgba(255, 77, 109, 0.1) 0%, 
+        rgba(111, 66, 193, 0.1) 25%, 
+        rgba(255, 193, 7, 0.1) 50%, 
+        rgba(40, 167, 69, 0.1) 75%, 
+        rgba(255, 77, 109, 0.1) 100%);
+      background-size: 300% 300%;
+      animation: fomoShift 8s ease-in-out infinite;
+    }
+    
+    @keyframes fomoShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+  </style>
+</head>
+<body class="bg-primary text-white font-body">
+  <div id="loading-screen" class="fixed inset-0 flex items-center justify-center z-50">
+    <!-- Background Images -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-0 left-0 w-1/2 h-full bg-cover bg-center opacity-60 blur-sm" style="background-image: url('callofduty.jpg'); transform: scale(1.2);"></div>
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-cover bg-center opacity-60 blur-sm" style="background-image: url('avengersinfinitywar.jpg'); transform: scale(1.2);"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+    </div>
+    <div class="doors absolute inset-0 flex overflow-hidden z-10">
+      <div id="door-left" class="door left w-1/2 h-full bg-gradient-to-b from-gray-900 via-gray-900/20 to-transparent flex items-center justify-end"></div>
+      <div id="door-right" class="door right w-1/2 h-full bg-gradient-to-b from-transparent via-gray-900/20 to-gray-900 flex items-center justify-start"></div>
+    </div>
+    <div class="brand relative z-10 text-center">
+      <h1 class="headline font-display text-5xl md:text-6xl tracking-wide mb-2 drop-shadow-2xl">CURATE · PLAY · WATCH</h1>
+      <p class="sub font-light opacity-90 drop-shadow-lg">Top picks for <span class="dynamic inline-block relative h-[1.1em] overflow-hidden"><span class="block animate-[swap_12s_linear_infinite]">PC Games</span><span class="block animate-[swap_12s_linear_infinite]">Android Games</span><span class="block animate-[swap_12s_linear_infinite]">Movies</span><span class="block animate-[swap_12s_linear_infinite]">TV Shows</span><span class="block animate-[swap_12s_linear_infinite]">Web Series</span><span class="block animate-[swap_12s_linear_infinite]">Steam Games</span><span class="block animate-[swap_12s_linear_infinite]">Xbox Games</span><span class="block animate-[swap_12s_linear_infinite]">PlayStation Games</span><span class="block animate-[swap_12s_linear_infinite]">Indie Gems</span></span></p>
+      
+      <!-- Social Proof Element -->
+      <div class="social-proof-badge inline-block px-4 py-2 rounded-full text-xs font-medium text-purple-200 mt-4 mb-2">
+        🔥 <span id="visitor-count">12,847,293</span> users exploring now
+      </div>
+      
+      <!-- User Count in Different Formats -->
+      <div class="flex justify-center gap-4 mt-2 mb-4">
+        <div class="bg-accent-1/20 backdrop-blur-sm border border-accent-1/30 rounded-full px-3 py-1">
+          <span class="text-xs text-accent-1 font-medium">📊 <span id="million-count">12.8M</span> million users</span>
+        </div>
+      </div>
+      
+      <!-- Scarcity Element -->
+      <div class="scarcity-indicator text-xs text-center px-3 py-1 rounded-full text-white mx-auto w-fit">
+        ⚡ Limited access - Join before spots fill up
+      </div>
+    </div>
+    <div class="press-to-open fixed bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+      <p class="text-white text-lg font-semibold animate-pulse cursor-pointer bg-black/50 backdrop-blur-sm px-6 py-3 rounded-full border border-white/30 hover:border-accent-1 transition-all duration-300 drop-shadow-lg urgency-pulse commitment-trigger">Press to open</p>
+    </div>
+  </div>
+
+  <main id="content" class="opacity-0 transition-opacity duration-400">
+    <div class="container mx-auto px-4 py-6">
+      <div class="text-center mb-16">
+        <h1 class="font-display text-6xl md:text-7xl mb-4 bg-gradient-to-r from-accent-1 via-white to-accent-2 bg-clip-text text-transparent">CURATOR</h1>
+        <p class="text-xl md:text-2xl text-gray-300 subtitle-glow font-light tracking-wide">The best free website to get these treasures</p>
+        
+        <!-- Personalization Hook -->
+        <div class="mt-6 mb-4">
+          <div class="inline-block bg-gradient-to-r from-accent-1/20 to-accent-2/20 backdrop-blur-sm border border-accent-1/30 rounded-full px-6 py-2">
+            <span class="text-sm text-gray-300">🎯 Personalized for </span>
+            <span class="text-accent-1 font-medium" id="user-type">Content Enthusiasts</span>
+          </div>
+        </div>
+        
+        <div class="w-24 h-1 bg-gradient-to-r from-accent-1 to-accent-2 mx-auto mt-4 rounded-full"></div>
+        
+        <!-- Authority Badge -->
+        <div class="mt-6 flex justify-center items-center space-x-6 text-sm text-gray-400">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span>Verified Content</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+            <span>Premium Sources</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+            <span>Curated Daily</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Category Grid -->
+      <div class="category-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-7xl mx-auto mb-8">
+        <!-- Games Card -->
+        <div class="category-card relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 cursor-pointer group overflow-hidden h-80 fomo-gradient" onclick="window.location.href='games.html'">
+          <!-- Animated Background Images -->
+          <div class="games-animated-bg" style="background-image: url('gtav.jpg');"></div>
+          <div class="games-animated-bg" style="background-image: url('minecraft.jpg');"></div>
+          <div class="games-animated-bg" style="background-image: url('tetris.jpg');"></div>
+          <div class="games-animated-bg" style="background-image: url('callofduty.jpg');"></div>
+          <div class="games-animated-bg" style="background-image: url('pokemongo.jpg');"></div>
+          <div class="games-animated-bg" style="background-image: url('fortnite.jpg');"></div>
+          
+          <!-- Psychology Elements -->
+          <div class="absolute top-4 right-4 z-20">
+            <div class="bg-accent-1/90 text-white text-xs px-2 py-1 rounded-full font-bold">
+              HOT 🔥
+            </div>
+          </div>
+          
+          <div class="relative z-10">
+            <div class="category-icon text-5xl mb-6 text-accent-1">🎮</div>
+            <h3 class="font-display text-3xl mb-4">GAMES</h3>
+            <p class="text-lg text-gray-300 opacity-80 mb-6">PC, Mobile, Console</p>
+            
+            <!-- Social Proof -->
+            <div class="text-xs text-accent-1 font-medium">
+              👥 <span class="game-users">2.1M</span> users exploring now
+            </div>
+          </div>
+          
+          <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-accent-2/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 z-10"></div>
+        </div>
+        
+        <!-- Shows Card -->
+        <div class="category-card relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 cursor-pointer group overflow-hidden h-80 fomo-gradient" onclick="window.location.href='shows.html'">
+          <!-- Animated Background Images -->
+          <div class="shows-animated-bg" style="background-image: url('avatar.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('avengers.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('titanic.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('starwars.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('avengersinfinitywar.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('frozen.jpg');"></div>
+          <div class="shows-animated-bg" style="background-image: url('lionking.jpg');"></div>
+          
+          <!-- Psychology Elements -->
+          <div class="absolute top-4 right-4 z-20">
+            <div class="bg-purple-500/90 text-white text-xs px-2 py-1 rounded-full font-bold">
+              TRENDING 🔝
+            </div>
+          </div>
+          
+          <div class="relative z-10">
+            <div class="category-icon text-5xl mb-6 text-purple-400">📺</div>
+            <h3 class="font-display text-3xl mb-4">SHOWS</h3>
+            <p class="text-lg text-gray-300 opacity-80 mb-6">Movies, Series, TV</p>
+            
+            <!-- Social Proof -->
+            <div class="text-xs text-purple-400 font-medium">
+              🎆 <span class="shows-users">3.4M</span> watched today
+            </div>
+          </div>
+          
+          <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-purple-400/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 z-10"></div>
+        </div>
+        
+        <!-- Software Card -->
+        <div class="category-card relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 cursor-pointer group overflow-hidden h-80 fomo-gradient" onclick="window.location.href='software.html'">
+          <!-- Animated Background Images -->
+          <div class="software-animated-bg" style="background-image: url('capcut.jpg');"></div>
+          <div class="software-animated-bg" style="background-image: url('premirepro.jpg');"></div>
+          <div class="software-animated-bg" style="background-image: url('windows.jpg');"></div>
+          
+          <!-- Psychology Elements -->
+          <div class="absolute top-4 right-4 z-20">
+            <div class="bg-yellow-500/90 text-black text-xs px-2 py-1 rounded-full font-bold">
+              PRO ⭐
+            </div>
+          </div>
+          
+          <div class="relative z-10">
+            <div class="category-icon text-5xl mb-6 text-yellow-400">💻</div>
+            <h3 class="font-display text-3xl mb-4">SOFTWARE</h3>
+            <p class="text-lg text-gray-300 opacity-80 mb-6">Apps, Tools, Utilities</p>
+            
+            <!-- Social Proof -->
+            <div class="text-xs text-yellow-400 font-medium">
+              🚀 <span class="software-users">1.8M</span> downloads today
+            </div>
+          </div>
+          
+          <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 z-10"></div>
+        </div>
+        
+        <!-- Others Card -->
+        <div class="category-card relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 cursor-pointer group overflow-hidden h-80 fomo-gradient" onclick="window.location.href='others.html'">
+          <!-- Animated Background Images -->
+          <div class="others-animated-bg" style="background-image: url('richdadpoordad.jpg');"></div>
+          <div class="others-animated-bg" style="background-image: url('multi.jpg');"></div>
+          <div class="others-animated-bg" style="background-image: url('phycologyofmoney.jpg');"></div>
+          
+          <!-- Psychology Elements -->
+          <div class="absolute top-4 right-4 z-20">
+            <div class="bg-green-500/90 text-white text-xs px-2 py-1 rounded-full font-bold">
+              RARE 🔍
+            </div>
+          </div>
+          
+          <div class="relative z-10">
+            <div class="category-icon text-5xl mb-6 text-green-400">✨</div>
+            <h3 class="font-display text-3xl mb-4">OTHERS</h3>
+            <p class="text-lg text-gray-300 opacity-80 mb-6">Books, Music, More</p>
+            
+            <!-- Social Proof -->
+            <div class="text-xs text-green-400 font-medium">
+              📚 <span class="others-users">956K</span> readers today
+            </div>
+          </div>
+          
+          <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-green-400/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500 z-10"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Netflix-Style Gallery Section -->
+    <section class="netflix-gallery container mx-auto px-4 py-12">
+      <div class="gallery-container bg-gradient-to-br from-gray-900/90 to-black/90 backdrop-blur-sm border border-gray-700/30 rounded-3xl p-8">
+        <!-- Featured Gallery Section -->
+        <div class="mb-12">
+          <h2 class="font-display text-4xl md:text-5xl mb-2 bg-gradient-to-r from-accent-1 via-white to-accent-2 bg-clip-text text-transparent">FEATURED COLLECTION</h2>
+          <p class="text-gray-400 text-lg mb-8">Highest-earning entertainment content of all time</p>
+          
+          <!-- Psychological Hook -->
+          <div class="text-center mb-6">
+            <div class="inline-block bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm border border-yellow-500/30 rounded-full px-4 py-2">
+              <span class="text-yellow-400 text-sm font-medium">🏆 Billionaire's Choice - Content Worth $50+ Billion Combined</span>
+            </div>
+          </div>
+          
+          <!-- Main Featured Grid -->
+          <div class="featured-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+            <div class="poster-card group cursor-pointer">
+              <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-accent-1/30 group-hover:z-10" style="background-image: url('gtav.jpg'); background-size: cover; background-position: center;">
+                <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-4 left-4 right-4">
+                    <h3 class="text-white font-bold text-sm mb-1">Grand Theft Auto V</h3>
+                    <p class="text-gray-300 text-xs">$6+ Billion Revenue</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="poster-card group cursor-pointer">
+              <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-purple-500/30 group-hover:z-10" style="background-image: url('avengers.jpg'); background-size: cover; background-position: center;">
+                <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-4 left-4 right-4">
+                    <h3 class="text-white font-bold text-sm mb-1">Avengers: Endgame</h3>
+                    <p class="text-gray-300 text-xs">$2.798 Billion Box Office</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="poster-card group cursor-pointer">
+              <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-green-500/30 group-hover:z-10" style="background-image: url('avatar.jpg'); background-size: cover; background-position: center;">
+                <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-4 left-4 right-4">
+                    <h3 class="text-white font-bold text-sm mb-1">Avatar</h3>
+                    <p class="text-gray-300 text-xs">$2.923 Billion Box Office</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="poster-card group cursor-pointer">
+              <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-red-500/30 group-hover:z-10" style="background-image: url('avengersinfinitywar.jpg'); background-size: cover; background-position: center;">
+                <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-4 left-4 right-4">
+                    <h3 class="text-white font-bold text-sm mb-1">Avengers: Infinity War</h3>
+                    <p class="text-gray-300 text-xs">$2.048 Billion Box Office</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Category-Specific Galleries -->
+        <div class="category-galleries space-y-12">
+          <!-- Games Gallery -->
+          <div class="games-gallery">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-display text-2xl md:text-3xl bg-gradient-to-r from-accent-1 to-accent-2 bg-clip-text text-transparent">TRENDING GAMES</h3>
+              <a href="games.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-300">View All →</a>
+            </div>
+            <div class="poster-row grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-red-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-accent-1/40 group-hover:z-10" style="background-image: url('gtav.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-blue-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/40 group-hover:z-10" style="background-image: url('minecraft.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-purple-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/40 group-hover:z-10" style="background-image: url('tetris.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-green-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-green-500/40 group-hover:z-10" style="background-image: url('callofduty.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-yellow-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-yellow-500/40 group-hover:z-10" style="background-image: url('pokemongo.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='games.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-indigo-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-indigo-500/40 group-hover:z-10" style="background-image: url('fortnite.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Shows Gallery -->
+          <div class="shows-gallery">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-display text-2xl md:text-3xl bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">POPULAR SHOWS</h3>
+              <a href="shows.html" class="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-300">View All →</a>
+            </div>
+            <div class="poster-row grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-purple-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/40 group-hover:z-10" style="background-image: url('avatar.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-pink-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-pink-500/40 group-hover:z-10" style="background-image: url('avengers.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-red-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-red-500/40 group-hover:z-10" style="background-image: url('titanic.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-blue-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/40 group-hover:z-10" style="background-image: url('starwars.jpg'); background-size: cover; background-position: center;">
+                </div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-teal-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-teal-500/40 group-hover:z-10" style="background-image: url('frozen.jpg'); background-size: cover; background-position: center;"></div>
+              </div>
+              <div class="poster-card group cursor-pointer" onclick="window.location.href='shows.html'">
+                <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-orange-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-orange-500/40 group-hover:z-10" style="background-image: url('lionking.jpg'); background-size: cover; background-position: center;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Loading animation and navigation logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadingScreen = document.getElementById('loading-screen');
+      const urlParams = new URLSearchParams(window.location.search);
+      const skipLoading = urlParams.get('skip') === 'true';
+      
+      // Function to show main content
+      const showMainContent = () => {
+        document.getElementById('door-left').style.transform = 'translateX(-100%)';
+        document.getElementById('door-right').style.transform = 'translateX(100%)';
+        document.getElementById('loading-screen').style.opacity = '0';
+        document.getElementById('content').style.opacity = '1';
+        
+        // Animate category cards with staggered delay
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.category-card');
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add('animate-fadeInUp');
+            }, index * 150);
+          });
+        }, 500);
+        
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+        }, 1000);
+      };
+      
+      // If skip parameter is true, immediately show main content
+      if (skipLoading) {
+        showMainContent();
+      } else {
+        // Add click event listener to the loading screen for first-time visitors
+        loadingScreen.addEventListener('click', showMainContent);
+      }
+      
+      // Netflix Gallery Animation
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const cards = entry.target.querySelectorAll('.poster-card');
+            cards.forEach((card, index) => {
+              setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+              }, index * 100);
+            });
+          }
+        });
+      }, observerOptions);
+      
+      // Observe gallery sections
+      const gallerySections = document.querySelectorAll('.games-gallery, .shows-gallery, .featured-grid');
+      gallerySections.forEach(section => {
+        // Set initial state for cards
+        const cards = section.querySelectorAll('.poster-card');
+        cards.forEach(card => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        observer.observe(section);
+      });
+      
+      // Add touch support for mobile devices
+      if ('ontouchstart' in window) {
+        const posterCards = document.querySelectorAll('.poster-card');
+        posterCards.forEach(card => {
+          card.addEventListener('touchstart', function() {
+            this.classList.add('touch-active');
+          });
+          
+          card.addEventListener('touchend', function() {
+            setTimeout(() => {
+              this.classList.remove('touch-active');
+            }, 150);
+          });
+        });
+      }
+      
+      // Animated background cycling for category cards
+      const startBackgroundAnimation = () => {
+        // Games card animation
+        const gamesBackgrounds = document.querySelectorAll('.games-animated-bg');
+        let gamesIndex = 0;
+        
+        const cycleGamesBackground = () => {
+          gamesBackgrounds.forEach((bg, index) => {
+            bg.classList.remove('active');
+          });
+          
+          gamesBackgrounds[gamesIndex].classList.add('active');
+          gamesIndex = (gamesIndex + 1) % gamesBackgrounds.length;
+        };
+        
+        // Shows card animation
+        const showsBackgrounds = document.querySelectorAll('.shows-animated-bg');
+        let showsIndex = 0;
+        
+        const cycleShowsBackground = () => {
+          showsBackgrounds.forEach((bg, index) => {
+            bg.classList.remove('active');
+          });
+          
+          showsBackgrounds[showsIndex].classList.add('active');
+          showsIndex = (showsIndex + 1) % showsBackgrounds.length;
+        };
+        
+        // Software card animation
+        const softwareBackgrounds = document.querySelectorAll('.software-animated-bg');
+        let softwareIndex = 0;
+        
+        const cycleSoftwareBackground = () => {
+          softwareBackgrounds.forEach((bg, index) => {
+            bg.classList.remove('active');
+          });
+          
+          softwareBackgrounds[softwareIndex].classList.add('active');
+          softwareIndex = (softwareIndex + 1) % softwareBackgrounds.length;
+        };
+        
+        // Others card animation
+        const othersBackgrounds = document.querySelectorAll('.others-animated-bg');
+        let othersIndex = 0;
+        
+        const cycleOthersBackground = () => {
+          othersBackgrounds.forEach((bg, index) => {
+            bg.classList.remove('active');
+          });
+          
+          othersBackgrounds[othersIndex].classList.add('active');
+          othersIndex = (othersIndex + 1) % othersBackgrounds.length;
+        };
+        
+        // Start the animations
+        cycleGamesBackground();
+        cycleShowsBackground();
+        cycleSoftwareBackground();
+        cycleOthersBackground();
+        
+        // Set intervals for continuous cycling
+        setInterval(cycleGamesBackground, 3000); // Change every 3 seconds
+        setInterval(cycleShowsBackground, 2500); // Change every 2.5 seconds
+        setInterval(cycleSoftwareBackground, 2800); // Change every 2.8 seconds (unique timing)
+        setInterval(cycleOthersBackground, 3200); // Change every 3.2 seconds (unique timing)
+      };
+      
+      // Start background animations after main content is shown
+      setTimeout(startBackgroundAnimation, 1000);
+      
+      // Dark Psychology Enhancements
+      startPsychologyEnhancements();
+    });
+    
+    // Dark Psychology Functions
+    function startPsychologyEnhancements() {
+      // Dynamic visitor count (Social Proof)
+      const visitorCount = document.getElementById('visitor-count');
+      const millionCount = document.getElementById('million-count');
+      const tenThousandCount = document.getElementById('ten-thousand-count');
+      
+      if (visitorCount) {
+        setInterval(() => {
+          const currentCount = parseInt(visitorCount.textContent.replace(/,/g, ''));
+          const change = Math.floor(Math.random() * 150) + 50; // Larger increments for millions
+          const newCount = currentCount + change;
+          visitorCount.textContent = newCount.toLocaleString();
+          
+          // Update million format
+          const millionFormat = (newCount / 1000000).toFixed(1) + 'M';
+          if (millionCount) millionCount.textContent = millionFormat;
+          
+          // Update ten thousand format (万)
+          const tenThousandFormat = (newCount / 10000).toFixed(1) + '万';
+          if (tenThousandCount) tenThousandCount.textContent = tenThousandFormat;
+        }, 8000);
+      }
+      
+      // Update category user counts dynamically
+      const gameUsers = document.querySelector('.game-users');
+      const showsUsers = document.querySelector('.shows-users');
+      const softwareUsers = document.querySelector('.software-users');
+      const othersUsers = document.querySelector('.others-users');
+      
+      setInterval(() => {
+        if (gameUsers) {
+          const current = parseFloat(gameUsers.textContent.replace('M', '').replace('K', ''));
+          const isMillions = gameUsers.textContent.includes('M');
+          const change = Math.random() * 0.1;
+          const newCount = current + change;
+          gameUsers.textContent = newCount.toFixed(1) + (isMillions ? 'M' : 'K');
+        }
+        
+        if (showsUsers) {
+          const current = parseFloat(showsUsers.textContent.replace('M', '').replace('K', ''));
+          const isMillions = showsUsers.textContent.includes('M');
+          const change = Math.random() * 0.1;
+          const newCount = current + change;
+          showsUsers.textContent = newCount.toFixed(1) + (isMillions ? 'M' : 'K');
+        }
+        
+        if (softwareUsers) {
+          const current = parseFloat(softwareUsers.textContent.replace('M', '').replace('K', ''));
+          const isMillions = softwareUsers.textContent.includes('M');
+          const change = Math.random() * 0.1;
+          const newCount = current + change;
+          softwareUsers.textContent = newCount.toFixed(1) + (isMillions ? 'M' : 'K');
+        }
+        
+        if (othersUsers) {
+          const current = parseFloat(othersUsers.textContent.replace('M', '').replace('K', ''));
+          const isMillions = othersUsers.textContent.includes('M');
+          const change = Math.random() * 0.1;
+          const newCount = current + change;
+          othersUsers.textContent = newCount.toFixed(1) + (isMillions ? 'M' : 'K');
+        }
+      }, 12000);
+      
+      // Personalization rotation
+      const userTypes = [
+        'Content Enthusiasts',
+        'Game Collectors',
+        'Movie Buffs', 
+        'Tech Enthusiasts',
+        'Digital Curators',
+        'Entertainment Seekers'
+      ];
+      
+      const userTypeElement = document.getElementById('user-type');
+      if (userTypeElement) {
+        let typeIndex = 0;
+        setInterval(() => {
+          typeIndex = (typeIndex + 1) % userTypes.length;
+          userTypeElement.textContent = userTypes[typeIndex];
+        }, 4000);
+      }
+      
+      // Subtle urgency enhancement
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.category-card');
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.transform = 'translateY(-2px)';
+            setTimeout(() => {
+              card.style.transform = 'translateY(0)';
+            }, 200);
+          }, index * 300);
+        });
+      }, 2000);
+      
+      // Progressive engagement tracking
+      let engagementLevel = 0;
+      const trackEngagement = () => {
+        engagementLevel++;
+        if (engagementLevel === 3) {
+          showPersonalizationHint();
+        } else if (engagementLevel === 7) {
+          showCommitmentTrigger();
+        }
+      };
+      
+      // Add engagement listeners
+      document.querySelectorAll('.category-card, .poster-card').forEach(element => {
+        element.addEventListener('mouseenter', trackEngagement);
+      });
+      
+      function showPersonalizationHint() {
+        const hint = document.createElement('div');
+        hint.className = 'fixed top-4 right-4 bg-accent-1/90 text-white px-4 py-2 rounded-lg text-sm z-50 transform translate-x-full transition-transform duration-500';
+        hint.innerHTML = '✨ Content adapting to your interests...';
+        document.body.appendChild(hint);
+        
+        setTimeout(() => {
+          hint.style.transform = 'translateX(0)';
+          setTimeout(() => {
+            hint.style.transform = 'translateX(full)';
+            setTimeout(() => hint.remove(), 500);
+          }, 3000);
+        }, 100);
+      }
+      
+      function showCommitmentTrigger() {
+        const trigger = document.createElement('div');
+        trigger.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-accent-1 to-accent-2 text-white px-6 py-3 rounded-full text-sm font-medium z-50 animate-bounce';
+        trigger.innerHTML = '🎯 Ready to discover your perfect match?';
+        document.body.appendChild(trigger);
+        
+        setTimeout(() => {
+          trigger.style.animation = 'none';
+          trigger.style.opacity = '0';
+          setTimeout(() => trigger.remove(), 500);
+        }, 4000);
+      }
+    }
+  </script>
+</body>
+</html>
