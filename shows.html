@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shows - Game & Media Curator</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="icon" type="image/ico" href="./favicon.ico">
+  <meta name="msapplication-TileColor" content="#0f1115">
+  <meta name="theme-color" content="#0f1115">
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f1115',
+            accent: {
+              1: '#ff4d6d',
+              2: '#6f42c1'
+            }
+          },
+          fontFamily: {
+            display: ['Bebas Neue', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .subtitle-glow {
+      text-shadow: 0 0 20px rgba(255, 77, 109, 0.5);
+    }
+    
+    /* Netflix-Style Gallery Styles */
+    .poster-card {
+      position: relative;
+    }
+    
+    .poster-frame {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transform-origin: center;
+      will-change: transform;
+    }
+    
+    .poster-card:hover .poster-frame {
+      transform: scale(1.05) translateY(-5px) translateZ(0);
+      filter: brightness(1.1);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(138, 43, 226, 0.4);
+    }
+    
+    @media (max-width: 768px) {
+      .poster-card:hover .poster-frame {
+        transform: scale(1.03) translateY(-2px) translateZ(0);
+      }
+    }
+    
+    /* Add a subtle glow effect to posters on hover */
+    .poster-frame::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(138, 43, 226, 0.1), rgba(219, 39, 119, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
+    
+    .poster-card:hover .poster-frame::after {
+      opacity: 1;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-fadeInUp {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-primary text-white font-body">
+  <main class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <div class="mb-4">
+        <a href="index.html?skip=true" class="inline-flex items-center text-gray-400 hover:text-white transition-colors duration-300">
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to Home
+        </a>
+      </div>
+      <div class="text-6xl mb-6">📺</div>
+      <h1 class="font-display text-6xl md:text-7xl mb-4 bg-gradient-to-r from-accent-1 via-white to-accent-2 bg-clip-text text-transparent">SHOWS</h1>
+      <p class="text-xl md:text-2xl text-gray-300 subtitle-glow font-light tracking-wide">Movies, Series, TV</p>
+      <div class="w-24 h-1 bg-gradient-to-r from-accent-1 to-accent-2 mx-auto mt-4 rounded-full"></div>
+    </div>
+    
+    <!-- Content Area - Website Cards First -->
+    <div class="content-area bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 rounded-3xl p-8 min-h-96 animate-fadeInUp mb-12">
+      <!-- Shows Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Movie Box Card -->
+        <div class="show-site-card bg-black/80 border border-gray-600 rounded-2xl overflow-hidden hover:border-accent-1 hover:shadow-2xl hover:shadow-accent-1/20 transition-all duration-500 group">
+          <!-- Card Header -->
+          <div class="bg-gradient-to-r from-accent-1 to-accent-2 p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display text-2xl text-white">MOVIE BOX - HIGHEST-EARNING SHOWS</h3>
+              <div class="flex gap-2">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">SAFEST</span>
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">POPULAR</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Card Content -->
+          <div class="p-6">
+            <!-- Description -->
+            <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+              Premium streaming platform for movies and TV shows. High quality content with excellent streaming performance.
+            </p>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+              <div class="text-center">
+                <div class="text-accent-1 font-bold text-lg">100%</div>
+                <div class="text-gray-400 text-xs">Safe</div>
+              </div>
+              <div class="text-center">
+                <div class="text-green-400 font-bold text-lg">5000+</div>
+                <div class="text-gray-400 text-xs">Movies</div>
+              </div>
+              <div class="text-center">
+                <div class="text-blue-400 font-bold text-lg">4.9/5</div>
+                <div class="text-gray-400 text-xs">Rating</div>
+              </div>
+            </div>
+            
+            <!-- Link -->
+            <div class="mb-4">
+              <a href="https://moviebox.ph/" target="_blank" 
+                 class="block bg-gray-900 border border-gray-700 rounded-lg p-3 hover:border-accent-1 transition-colors duration-300 group">
+                <div class="flex items-center justify-between">
+                  <span class="text-accent-1 font-mono text-sm truncate">moviebox.ph</span>
+                  <svg class="w-4 h-4 text-gray-400 group-hover:text-accent-1 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Quick Comment -->
+            <div class="border-t border-gray-700 pt-4">
+              <div class="flex gap-3">
+                <div class="w-8 h-8 bg-gradient-to-r from-accent-1 to-accent-2 rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-bold">💬</span>
+                </div>
+                <div class="flex-1 flex gap-2">
+                  <input type="text" placeholder="Quick comment..." 
+                         class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 text-sm focus:border-accent-1 focus:outline-none transition-colors duration-300">
+                  <button class="bg-accent-1 hover:bg-accent-2 text-white px-3 py-2 rounded-lg transition-colors duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Vega Movies Card -->
+        <div class="show-site-card bg-black/80 border border-gray-600 rounded-2xl overflow-hidden hover:border-accent-1 hover:shadow-2xl hover:shadow-accent-1/20 transition-all duration-500 group">
+          <!-- Card Header -->
+          <div class="bg-gradient-to-r from-yellow-500 to-orange-600 p-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-display text-2xl text-white">VEGA MOVIES - HIGHEST-EARNING SHOWS</h3>
+              <div class="flex gap-2">
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">SAFE</span>
+                <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold">RELIABLE</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Card Content -->
+          <div class="p-6">
+            <!-- Description -->
+            <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+              Quality movie downloads with multiple format options. Known for latest releases and HD quality content.
+            </p>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+              <div class="text-center">
+                <div class="text-green-400 font-bold text-lg">95%</div>
+                <div class="text-gray-400 text-xs">Safe</div>
+              </div>
+              <div class="text-center">
+                <div class="text-yellow-400 font-bold text-lg">3000+</div>
+                <div class="text-gray-400 text-xs">Movies</div>
+              </div>
+              <div class="text-center">
+                <div class="text-orange-400 font-bold text-lg">4.7/5</div>
+                <div class="text-gray-400 text-xs">Rating</div>
+              </div>
+            </div>
+            
+            <!-- Link -->
+            <div class="mb-4">
+              <a href="https://vegamovies.sm/" target="_blank" 
+                 class="block bg-gray-900 border border-gray-700 rounded-lg p-3 hover:border-accent-1 transition-colors duration-300 group">
+                <div class="flex items-center justify-between">
+                  <span class="text-accent-1 font-mono text-sm truncate">vegamovies.sm</span>
+                  <svg class="w-4 h-4 text-gray-400 group-hover:text-accent-1 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </div>
+              </a>
+            </div>
+            
+            <!-- Quick Comment -->
+            <div class="border-t border-gray-700 pt-4">
+              <div class="flex gap-3">
+                <div class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-bold">💬</span>
+                </div>
+                <div class="flex-1 flex gap-2">
+                  <input type="text" placeholder="Quick comment..." 
+                         class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 text-sm focus:border-accent-1 focus:outline-none transition-colors duration-300">
+                  <button class="bg-yellow-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg transition-colors duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Add New Site Card -->
+        <div class="show-site-card bg-black/80 border-2 border-dashed border-gray-600 rounded-2xl flex items-center justify-center hover:border-accent-1 transition-all duration-500 group cursor-pointer min-h-[400px]" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSc1l2PxHXq6NznzwjfBLC4eybt_GLkcK8pvPQpccX17I4drGg/viewform?usp=dialog', '_blank')">
+          <div class="text-center p-8">
+            <div class="w-16 h-16 bg-gradient-to-r from-accent-1 to-accent-2 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+            </div>
+            <h3 class="font-display text-2xl text-white mb-2">ADD NEW SITE</h3>
+            <p class="text-gray-400 text-sm">Click to add another streaming website</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Netflix-Style Gallery Section -->
+    <div class="netflix-gallery mb-12">
+      <div class="gallery-container bg-gradient-to-br from-gray-900/90 to-black/90 backdrop-blur-sm border border-gray-700/30 rounded-3xl p-8">
+        <h2 class="font-display text-3xl md:text-4xl mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">FEATURED SHOWS & MOVIES</h2>
+        
+        <!-- Shows Gallery Grid -->
+        <div class="shows-gallery-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-blue-500/30 group-hover:z-10" style="background-image: url('avatar.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Avatar</h3>
+                  <p class="text-gray-300 text-xs">$2.923 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-red-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-red-500/30 group-hover:z-10" style="background-image: url('avengers.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Avengers: Endgame</h3>
+                  <p class="text-gray-300 text-xs">$2.798 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-blue-500/30 group-hover:z-10" style="background-image: url('titanic.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Titanic</h3>
+                  <p class="text-gray-300 text-xs">$2.257 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-yellow-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-yellow-500/30 group-hover:z-10">
+              <div class="poster-frame relative overflow-hidden rounded-lg bg-gradient-to-br from-blue-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-blue-500/40 group-hover:z-10" style="background-image: url('starwars.jpg'); background-size: cover; background-position: center;"></div>
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Star Wars: Force Awakens</h3>
+                  <p class="text-gray-300 text-xs">$2.071 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-purple-500/30 group-hover:z-10" style="background-image: url('avengersinfinitywar.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Avengers: Infinity War</h3>
+                  <p class="text-gray-300 text-xs">$2.048 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-purple-500/30 group-hover:z-10" style="background-image: url('frozen.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">Frozen</h3>
+                  <p class="text-gray-300 text-xs">$1.282 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="poster-card group cursor-pointer">
+            <div class="poster-frame relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-900/50 to-gray-900 aspect-[2/3] transition-all duration-500 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-purple-500/30 group-hover:z-10" style="background-image: url('lionking.jpg'); background-size: cover; background-position: center;">
+              <div class="poster-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div class="absolute bottom-4 left-4 right-4">
+                  <h3 class="text-white font-bold text-sm mb-1">The Lion King</h3>
+                  <p class="text-gray-300 text-xs">$1.657 Billion Box Office</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
+    </div>
+  </main>
+</body>
+<script>
+  // Netflix Gallery Animation
+  document.addEventListener('DOMContentLoaded', () => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const cards = entry.target.querySelectorAll('.poster-card');
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, index * 100);
+          });
+        }
+      });
+    }, observerOptions);
+    
+    // Observe gallery sections
+    const gallerySections = document.querySelectorAll('.shows-gallery-grid');
+    gallerySections.forEach(section => {
+      // Set initial state for cards
+      const cards = section.querySelectorAll('.poster-card');
+      cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      });
+      observer.observe(section);
+    });
+    
+    // Add touch support for mobile devices
+    if ('ontouchstart' in window) {
+      const posterCards = document.querySelectorAll('.poster-card');
+      posterCards.forEach(card => {
+        card.addEventListener('touchstart', function() {
+          this.classList.add('touch-active');
+        });
+        
+        card.addEventListener('touchend', function() {
+          setTimeout(() => {
+            this.classList.remove('touch-active');
+          }, 150);
+        });
+      });
+    }
+  });
+</script>
+</html>
