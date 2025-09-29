@@ -957,5 +957,28 @@
       }
     }
   </script>
+
+  <!-- Firebase App (core SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+
+  <!-- Firebase Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js"></script>
+
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDx2MDSXMvTrEkZzGKmIYyJLR8ExdC3jaw",
+      authDomain: "curator-19861016.firebaseapp.com",
+      projectId: "curator-19861016",
+      storageBucket: "curator-19861016.firebasestorage.app",
+      messagingSenderId: "849544790373",
+      appId: "1:849544790373:web:715282d93a2822739ca18c",
+      measurementId: "G-X7EM7R93NY"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const analytics = firebase.analytics(app);
+  </script>
 </body>
 </html>
